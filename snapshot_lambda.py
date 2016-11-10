@@ -5,7 +5,7 @@ import datetime
 before = datetime.timedelta(days=7)
 # Represents the id of a volume.
 # this script creates a snapshot of it, and deletes those of it
-target_volume='vol-03f231d63dbfd7a25'
+target_volume='volume_id'
 
 import boto3
 import dateutil
