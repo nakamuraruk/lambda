@@ -1,10 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import datetime
 
+# This script deletes the snapshots 
+# created before the time repesented by currenttime - the following timedelta
 before = datetime.timedelta(days=7)
-target_volume='vol-0b396e3818161be54'
+# Represents the id of a volume.
+# this script creates a snapshot of it, and deletes those of it
+target_volume='vol-03f231d63dbfd7a25'
 
 import boto3
 import dateutil
@@ -25,11 +26,9 @@ def delete_snapshots(client, snapshot_ids):
         print('delete the snapshot[snapshot id:' + snapshot_id + ']')
         client.delete_snapshot(SnapshotId=snapshot_id)
 
-ec2 = boto3.client('ec2')
-create_snapshot(ec2, target_volume) 
-
-snapshots = ec2.describe_snapshots(Filters=[{'Name':'volume-id','Values':[target_volume]}])
-
-delete_ids = find_ids_of_snapshots(snapshots['Snapshots'], before)
-
-delete_snapshots(ec2, delete_ids)
+def lambda_handler(event, context):
+    ec2 = boto3.client('ec2')
+    create_snapshot(ec2, target_volume) 
+    snapshots = ec2.describe_snapshots(Filters=[{'Name':'volume-id','Values':[target_volume]}])
+    delete_ids = find_ids_of_snapshots(snapshots['Snapshots'], before)
+    delete_snapshots(ec2, delete_ids)
